@@ -1,0 +1,179 @@
+*,
+*:before,
+*:after{
+  padding: 0;
+  margin: 0;
+  box-sizing: border-box;
+}
+
+h1{
+  text-align: center;
+  font-size: 2rem;
+  margin: 20px;
+  color: black;
+  letter-spacing: 10px;
+  font-weight: 400;
+  text-align: center;
+}
+
+.fan-root{
+  //transform: translateY(-100px);
+  padding: 1rem 0;
+  position: relative;
+  width: 350px;
+  height: 75vh;
+  margin: auto;
+}
+
+.fan{
+  height: 350px;
+  width: 350px;
+  position: absolute;
+  margin: auto;
+  top: 0;
+  bottom: 0;
+  left: 0;
+  right: 0;
+  transform: translateY(150px);
+  //scale: 1.2;
+}
+
+.fan-router{
+  transform: unset;
+}
+
+
+label{
+  display: block;
+  height: 20px;
+  width: 20px;
+  background-color: black;
+  position: absolute;
+  margin: 120px auto 0 auto;
+  left: 0;
+  right: 0;
+  border-radius: 50%;
+  animation: spin 1s infinite linear;
+  animation-play-state: paused;
+}
+@keyframes spin{
+  100%{
+    transform: rotate(360deg);
+  }
+}
+
+label:after{
+  content: "";
+  position: absolute;
+  height: 70px;
+  width: 70px;
+  background-color: #005fe4;
+  border: 10px solid #00317e;
+  border-radius: 50%;
+  left: -25px;
+  bottom: -25px;
+}
+label span{
+  display: block;
+  height: 120px;
+  width: 70px;
+  background-color: #fdbf00;
+  border-radius: 55% 45% 100% 0% / 39% 28% 72% 61%;
+  position: absolute;
+  z-index: -1;
+}
+label{
+  span:nth-child(1){
+    bottom: 10px;
+    left: 10px;
+  }
+  span:nth-child(2){
+    transform: rotate(-120deg);
+    left: -95px;
+    top: -50px;
+  }
+  span:nth-child(3){
+    transform: rotate(-240deg);
+    right: -60px;
+    top: 10px;
+  }
+}
+.base{
+  height: 160px;
+  width: 20px;
+  background-color: #00317e;
+  position: absolute;
+  margin: auto;
+  left: 0;
+  right: 0;
+  top: 140px;
+  z-index: -1;
+}
+.base:after{
+  content: "";
+  position: absolute;
+  height: 35px;
+  width: 150px;
+  background-color: #fdbf00;
+  left: -65px;
+  top: 160px;
+  border-radius: 20px 20px 0 0;
+}
+input[type="checkbox"]{
+  position: absolute;
+  -webkit-appearance: none;
+  appearance: none;
+  height: 12px;
+  width: 20px;
+  background-color: #c30010;
+  position: absolute;
+  bottom: 50px;
+  left: 130px;
+  outline: none;
+  cursor: pointer;
+  border-radius: 5px 5px 0 0;
+}
+input[type="checkbox"]:checked{
+  height: 8px;
+}
+input[type="checkbox"]:checked + label{
+  animation-play-state: running;
+}
+
+label {
+  animation-play-state: paused;
+}
+
+
+
+
+// navigation controller
+.controlButtons{
+  position: absolute;
+  bottom: 0;
+  transform: translateY(-10px);
+  left: 0;
+  width: 100%;
+  height: 50px;
+  display: flex;
+  justify-content: space-between;
+}
+
+
+.bulbs-controller{
+  width: 70%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.light-icon-circle{
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #aaafaf;
+}
+
+.light-icon-circle-highlight{
+  background: #005fe4;
+}

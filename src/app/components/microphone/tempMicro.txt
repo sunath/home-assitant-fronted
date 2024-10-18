@@ -1,0 +1,127 @@
+import { AfterViewInit, Component, ElementRef, OnInit, ViewChild } from '@angular/core';
+import { DomSanitizer, SafeUrl } from '@angular/platform-browser';
+import { Stream } from 'stream';
+
+@Component({
+  selector: 'app-microphone',
+  templateUrl: './microphone.component.html',
+  styleUrls: ['./microphone.component.scss']
+})
+export class MicrophoneComponent implements OnInit,AfterViewInit {
+
+
+
+
+  @ViewChild('myCanvas')
+  canvas:ElementRef<HTMLCanvasElement>|null = null;
+
+  ctx: CanvasRenderingContext2D  | null = null;
+
+  audioBlobs:any[] = []
+
+  src:SafeUrl = ""
+
+  constructor(public domSanitizer:DomSanitizer) {
+
+  }
+
+
+  public onRecordClick(){
+
+  }
+
+
+  hello(){
+    console.log("in")
+  }
+
+  world(){
+    console.log("out")
+  }
+  ngOnInit(): void {
+  }
+
+  ngAfterViewInit(): void {
+    if(this.canvas){
+      this.ctx = this.canvas.nativeElement.getContext("2d")
+    }
+
+  }
+
+
+  // onRecordingStart(){
+  //
+  //   if(!(navigator.mediaDevices && navigator.mediaDevices.getUserMedia)){
+  //     return Promise.reject("Error browser does not support")
+  //   }else{
+  //     return navigator.mediaDevices.getUserMedia({audio:true}).then(stream => {
+
+        // this.stream = stream;
+        // this.mediaRecorder = new MediaRecorder(stream);
+      //   let audio = new AudioContext()
+      //   let audioInput = audio.createMediaStreamSource(stream)
+      //   let analyser = audio.createAnalyser()
+      //   audioInput.connect(analyser)
+
+      //   const h = () =>{
+      //     if(!this.canvas)return;
+      //     let cwidth = window.innerWidth
+      //     let cheight = 200
+      //     let meterWidth = 8,
+      //     gap = 2,
+      //     meterNum = cwidth / (meterWidth + gap)
+
+      //     if(!this.ctx){
+      //       requestAnimationFrame(h)
+      //       return
+      //     }
+
+      //   let gradient = this.ctx.createLinearGradient(0, 0, 0, cheight);
+      //     gradient.addColorStop(1, '#a467af');
+      //     gradient.addColorStop(0.3, '#ff0');
+      //     gradient.addColorStop(0, '#f00');
+      //     this.ctx.fillStyle = gradient;
+
+      //     var array = new Uint8Array(analyser.frequencyBinCount);
+      //     analyser.getByteFrequencyData(array)
+      //     console.log(array)
+
+
+      // var step = Math.round(array.length / meterNum);
+      // this.ctx.clearRect(0, 0, cwidth, cheight);
+      // for (var i = 0; i < meterNum; i++) {
+      //   var value = array[i * step];
+
+      //   this.ctx.fillRect(i * (meterWidth + gap), cheight - value, meterWidth, cheight);
+      // }
+
+      //     requestAnimationFrame(h)
+      //   }
+
+      //   h()
+
+
+    //     this.mediaRecorder.addEventListener('dataavailable',(event) => {
+    //       this.audioBlobs.push(event.data)
+    //     })
+    //
+    //
+    //     this.mediaRecorder.addEventListener('stop',(event) => {
+    //      const b = new  Blob(this.audioBlobs,{type:this.mediaRecorder?.mimeType})
+    //      const url =  this.domSanitizer.bypassSecurityTrustUrl(URL.createObjectURL(b))
+    //      this.src = url;
+    //      console.log(url)
+    //     })
+    //     this.mediaRecorder.start()
+    //
+    //     setTimeout(() => {this.mediaRecorder?.stop()},10000)
+    //   })
+    // }
+
+  // }
+
+
+
+
+
+}

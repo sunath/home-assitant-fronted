@@ -1,0 +1,63 @@
+
+app-root{
+  width: 100%;
+  height: 100%;
+}
+
+app-microphone{
+  //padding: 10px 0;
+  width: 100%;
+  height: 100%;
+  position: absolute;
+  //background: var(--microphone-layout-background);
+  //transition: all 1s ease-in-out;
+  //background-color: #00DBDE;
+  //background-image: linear-gradient(90deg, #00DBDE 0%, #FC00FF 100%);
+  z-index: 13;
+  //top: 90%;
+  bottom: 0;
+  //display: grid;
+  //z-index: -9;
+  //place-items: center;
+}
+
+app-navbar{
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 10vh;
+  z-index: 15;
+}
+
+
+.router-layout{
+  transform: translateY(12vh);
+  position: relative;
+  z-index: 14;
+  max-height: 77vh;
+  overflow: scroll;
+  height: 85vh;
+}
+
+app-fan{
+  display: block;
+  height: 100%;
+}
+
+.show{
+position: absolute;
+top: 0;
+ left: 0;
+ width: 100%;
+  z-index: 14;
+}
+
+.hide{
+  display: none;
+}
+
+
+app-home{
+  z-index: 13 !important;
+}

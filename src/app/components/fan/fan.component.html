@@ -1,0 +1,28 @@
+
+<div class="fan-root">
+
+  <h1>{{fanName}}</h1>
+
+  <div [className]="this.routerView ? 'fan fan-router ' : 'fan' ">
+    <input type="checkbox" id="btn" #fanCheckBox>
+    <label for="btn">
+      <span></span>
+      <span></span>
+      <span></span>
+    </label>
+    <div class="base"></div>
+  </div>
+
+
+  <div class="controlButtons" *ngIf="routerView">
+    <span  class="navigate-left-button"  (click)="goLeftArrowClick()"><svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="black"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg></span>
+
+    <div class="bulbs-controller">
+      <span [className]="getClassNameForLightIconCirlce(1)" (click)="onLightCircleGetClicked(1)"  ></span>
+    </div>
+
+    <span href="#" class="navigate-left-button" (click)="goRightArrowClick()" ><svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="black"><path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z"/></svg></span>
+  </div>
+
+</div>
+

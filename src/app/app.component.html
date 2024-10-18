@@ -1,0 +1,15 @@
+<app-navbar></app-navbar>
+
+
+<div   [className]=" ( 'router-layout '  + (!this.isRecording  ? 'show' : 'hide')) "  >
+
+  <router-outlet>
+
+  </router-outlet>
+
+</div>
+
+
+
+<app-microphone></app-microphone>
+<app-hand-controller></app-hand-controller>

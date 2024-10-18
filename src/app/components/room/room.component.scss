@@ -1,0 +1,80 @@
+
+.header{
+  text-align: center;
+ h1{
+   letter-spacing: 5px;
+   font-weight: bold;
+   font-size: 30px;
+ }
+}
+
+
+.room-container{
+  position: relative;
+  height: 75vh;
+}
+
+.component-container{
+  position: absolute;
+  top: 0;
+  left:50%;
+  //right: 0;
+  transform: translateY(50px) translateX(-50%);
+  display: none;
+}
+
+.component-container-show{
+  display: block;
+}
+
+
+
+
+.controlButtons{
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%) translateY(65px);
+  margin: auto;
+  width: 60%;
+  height: 50px;
+  display: flex;
+  justify-content: space-around;
+}
+
+//.navigate-left-button{
+//  position: absolute;
+//  right: 0;
+//  top: 60%;
+//  transform: translateY(-60%) translateX(-30px);
+//
+//}
+
+
+.bulbs-controller{
+  width: 70%;
+  display: flex;
+  justify-content: space-around;
+}
+
+.light-icon-circle{
+  display: block;
+  width: 30px;
+  height: 30px;
+  border-radius: 50%;
+  background: #aaafaf;
+}
+
+.light-icon-circle-highlight{
+  background: #005fe4;
+}
+
+
+.navigate-left-button > span{
+  fill: #2d2c2c !important;
+  transition: all .4s ease-out;
+}
+
+.navigate-left-button > span:hover{
+  fill: black;
+}

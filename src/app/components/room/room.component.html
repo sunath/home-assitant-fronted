@@ -1,0 +1,48 @@
+
+<div class="room-container">
+
+  <div class="header">
+    <h1>{{props.name}}</h1>
+  </div>
+
+
+  <div class="components">
+
+
+    <div [className]="getRoomClasses('light',i)"  *ngFor="let lightID of props.components.light;index as i;">
+      <app-light  [lightNumber]="lightID"  [routerMode]="false" [handGestureRoomEmitter]="roomHandSignatureEmitter" ></app-light>
+    </div>
+
+    <div [className]="getRoomClasses('door',i)"  *ngFor="let doorId of props.components.door;index as i;" >
+      <app-door [doorID]="doorId" [doorRouterView]="false" [handGestureRoomEmitter]="roomHandSignatureEmitter"> </app-door>
+    </div>
+
+
+    <div [className]="getRoomClasses('fan',i)" *ngFor="let fanID of props.components.fan;index as i">
+      <app-fan [fanNumber]="fanID"  [routerView]="false" [handGestureRoomEmitter]="roomHandSignatureEmitter"></app-fan>
+    </div>
+
+
+  </div>
+
+
+
+  <div class="controlButtons">
+    <span  class="navigate-left-button"  (click)="goLeftArrowClick()"><svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="black"><path d="M400-80 0-480l400-400 71 71-329 329 329 329-71 71Z"/></svg></span>
+
+    <div class="bulbs-controller">
+<!--      <span [className]="getClassNameForLightIconCirlce(1)" (click)="onLightCircleGetClicked(1)"  ></span>-->
+<!--      <span [className]="getClassNameForLightIconCirlce(2)" (click)="onLightCircleGetClicked(2)" ></span>-->
+<!--      <span [className]="getClassNameForLightIconCirlce(3)" (click)="onLightCircleGetClicked(3)" ></span>-->
+<!--      <span [className]="getClassNameForLightIconCirlce(4)" (click)="onLightCircleGetClicked(4)" ></span>-->
+<!--      <span [className]="getClassNameForLightIconCirlce(5)" (click)="onLightCircleGetClicked(5)" ></span>-->
+
+      <span *ngFor="let item of allComponentsCount;index as i" [className]="getClassNameForLightIconCirlce(i)" (click)="onLightCircleGetClicked(i)"></span>
+    </div>
+
+
+    <span href="#" class="navigate-left-button" (click)="goRightArrowClick()" ><svg xmlns="http://www.w3.org/2000/svg" height="30px" viewBox="0 -960 960 960" width="30px" fill="black"><path d="m321-80-71-71 329-329-329-329 71-71 400 400L321-80Z"/></svg></span>
+  </div>
+
+
+</div>

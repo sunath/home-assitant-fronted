@@ -1,0 +1,29 @@
+
+<div [className]="getRecordingContainerClassNames()" [@microphoneBackground]="this.isRecording ? 'recording' : 'paused' ">
+</div>
+
+
+<div id="bars" *ngIf="this.isRecording">
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+  <div class="bar"></div>
+</div>
+
+<!--<canvas [@audioAnalyserAnim]="isRecording ? 'recording' : 'paused' " #audioAnalyser  [width]="analyserWidth" [height]="analyserHeight" class="audioAnalyser">-->
+
+<!--</canvas>-->
+
+<button class="recording-button" mat-raised-button color="primary" (click)="toggleRecording()" #voiceButton>
+  <mat-icon>{{this.isRecording ? 'pause' : 'mic'}}</mat-icon>
+</button>
+
+
+
+<h2 class="decrypted-text" *ngIf="this.showResult">{{this.results}}</h2>

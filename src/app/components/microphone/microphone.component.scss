@@ -1,0 +1,183 @@
+
+
+.recording_layout{
+  width: 100%;
+  height: 100vh;
+  //border-radius: 50%;
+  position: absolute;
+  opacity: 1;
+  background: #b92b27; /* fallback for old browsers */
+  background: -webkit-linear-gradient(to right, #b92b27, #1565c0); /* Chrome 10-25, Safari 5.1-6 */
+  background: linear-gradient(to right, #b92b27, #1565c0);
+  //transition: all 1s ease-in;
+  //z-index: -2;
+  //position: relative;
+  //z-index: -1;
+  animation: 1s ease-in both recordingLayoutAppear;
+  //opacity: 1;
+}
+
+
+@keyframes recordingLayoutAppear {
+    0% {
+      //width: 0;
+      //height: 0;
+      opacity: 0;
+    }
+
+  100%{
+    //width: 100%;
+    //height: 100vh;
+    opacity: 1;
+  }
+}
+
+button{
+  position: relative;
+  z-index: 100;
+}
+
+
+
+.recording-background{
+  width: 100%;
+  height: 100vh;
+  position: absolute;
+  top:0;
+  left: 0;
+  opacity: 0;
+  transition: all 1s ease;
+  animation: 1s ease alternate RecordingBackToView;
+  background-image:linear-gradient(162deg, #ff5f6d  0%, #ffc371 100%);
+
+}
+
+
+.recording-background-recording{
+  opacity: 1;
+  //background: white;
+  //background-color: #0093E9;
+  background-image:linear-gradient(162deg, #ff5f6d  0%, #ffc371 100%);
+  transition:all 1s ease;
+}
+
+.recording-button{
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 100%;
+  //position: relative;
+  z-index: 100;
+}
+
+
+.recording-background-back{
+  animation: 1s ease alternate RecordingBackToView;
+}
+
+//@keyframes RecordingBackToView {
+//  0%{
+//    background-image:linear-gradient(162deg, #ff5f6d  0%, #ffc371 100%);
+//  }
+//
+//  100%{
+//    background: #000;
+//  }
+//}
+
+
+.audioAnalyser{
+  position: absolute;
+  top: 50%;
+  transform: translateY(-50%);
+}
+
+
+
+
+
+
+html, body {
+  height: 100%;
+}
+
+body {
+  display: flex;
+  justify-content: center;
+}
+
+#bars {
+  position: absolute;
+  top: 50%;
+  width: 100%;
+  left: 0;
+  transform: translateY(-50%);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  /*     background: black; */
+}
+
+.bar {
+  background: #52467b;
+  bottom: 1px;
+  height: 3px;
+  width: 10px;
+  margin: 0px 4px;
+  border-radius: 5px;
+  animation: sound 0ms -600ms linear infinite alternate;
+}
+
+@keyframes sound {
+  0% {
+    opacity: .35;
+    height: 3px;
+  }
+  100% {
+    opacity: 1;
+    height: 70px;
+  }
+}
+
+.bar:nth-child(1)  { left: 1px; animation-duration: 474ms; }
+.bar:nth-child(2)  { left: 15px; animation-duration: 433ms; }
+.bar:nth-child(3)  { left: 29px; animation-duration: 407ms; }
+.bar:nth-child(4)  { left: 43px; animation-duration: 458ms; }
+.bar:nth-child(5)  { left: 57px; animation-duration: 400ms; }
+.bar:nth-child(6)  { left: 71px; animation-duration: 427ms; }
+.bar:nth-child(7)  { left: 85px; animation-duration: 441ms; }
+.bar:nth-child(8)  { left: 99px; animation-duration: 419ms; }
+.bar:nth-child(9)  { left: 113px; animation-duration: 487ms; }
+.bar:nth-child(10) { left: 127px; animation-duration: 442ms; }
+
+
+
+.decrypted-text{
+  position: absolute;
+  left: 0;
+  width: 100%;
+  height: fit-content;
+  text-align: center;
+  text-space: 10px;
+  color: white;
+  overflow: hidden;
+  font-size: 30px;
+  text-transform: capitalize;
+  font-weight: bold;
+  letter-spacing: 3px;
+  transform: translateY(75vh);
+  animation: animatedText 1s forwards ease-out;
+}
+
+@keyframes animatedText {
+  0%{
+    width: 100%;
+    opacity: 0;
+  }
+
+  100%{
+    opacity: 1;
+    width: 100%;
+  }
+}

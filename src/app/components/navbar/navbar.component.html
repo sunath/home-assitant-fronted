@@ -1,0 +1,40 @@
+<div [className]="getMainNavbarClassNames()" *ngIf="!this.$microphoneRecording">
+
+  <div class="left-nav">
+    <a aria-label="" (click)="toggleNavbar()">
+      <mat-icon class="home-icon">{{this.isNavbarOpened ? 'close' : 'menu' }}</mat-icon>
+    </a>
+  </div>
+
+  <div class="middle-nav">
+    <img src="assets/home-logo-3.png" height="30" width="100" alt="">
+  </div>
+
+<!--  <div class="right-nav" style="">-->
+<!--&lt;!&ndash;    <h2>Home AI</h2>&ndash;&gt;-->
+
+<!--    <button mat-button color="primary">Room 1</button>-->
+<!--    <button mat-button color="primary">Room 2</button>-->
+<!--    <button mat-button color="primary">Room 3</button>-->
+<!--    <button mat-button color="primary">Room 4</button>-->
+<!--    <button mat-button color="primary">Lights</button>-->
+<!--    <button mat-button color="primary">Fans</button>-->
+<!--    <button mat-button color="primary">Doors</button>-->
+
+<!--  </div>-->
+</div>
+
+<div [className]=" 'navbar-opened ' + (this.isNavbarOpened ? 'navbar-opened-show' : 'navbar-opened-hide')  "  >
+  <a aria-label="" (click)="toggleNavbar()" class="mat-icon-close">
+    <mat-icon class="home-icon">{{this.isNavbarOpened ? 'close' : 'menu' }}</mat-icon>
+  </a>
+  <button mat-button [color]="getButtonHighlightedAccent(1)"  (click)="createNavLink('/light/1')">Lights</button>
+  <button mat-button [color]="getButtonHighlightedAccent(2)"  (click)="createNavLink('/door/1')">Doors</button>
+  <button mat-button [color]="getButtonHighlightedAccent(3)">Fans</button>
+  <button mat-button [color]="getButtonHighlightedAccent(4)">Room 1</button>
+  <button mat-button [color]="getButtonHighlightedAccent(5)">Room 2</button>
+</div>
+
+
+
+
