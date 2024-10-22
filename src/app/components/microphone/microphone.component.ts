@@ -11,6 +11,7 @@ import {microphoneRecordingEnd, microphoneRecordingStart} from "../../state/acti
 import {Router} from "@angular/router";
 import {shuffleArray} from "./shuffle";
 import {HomeService} from "../../services/home.service";
+import {coerceArray} from "@angular/cdk/coercion";
 
 
 function numberStringToNumber(str:string){
@@ -41,6 +42,8 @@ function numberStringToNumber(str:string){
   return 0;
 
 }
+
+
 
 /**
  * Microphone component - Handle the actions via microphone (sound)
@@ -162,9 +165,7 @@ export class MicrophoneComponent implements OnInit,AfterViewInit {
     // audioCanvasContext.fillRect(0,0,this.analyserWidth,this.analyserHeight);
   }
 
-  ngOnInit() {
-
-  }
+  ngOnInit() {}
 
 
   getRecordingContainerClassNames(){
@@ -250,6 +251,18 @@ export class MicrophoneComponent implements OnInit,AfterViewInit {
         const num = await numberStringToNumber(command);
         await this.homeService.fanOff(num);
         this.router.navigateByUrl("/fan/"+num+"?on=false")
+      }else if(command.startsWith("go to the")){
+        command = command.replace('go to the "','')
+        if(command.endsWith("page")){
+          command = command.replace(' page','')
+          if(command == "fan" || command == "door" || command == "light"){
+            await this.router.navigateByUrl(`/${command}/1`,{replaceUrl:true})
+          }
+        }else if(command.startsWith("room")){
+          command = command.replace('room ','');
+          const roomNumber = numberStringToNumber(command)
+          await this.router.navigateByUrl(`/room/${roomNumber}`,{replaceUrl:true})
+        }
       }
 
     },2000)

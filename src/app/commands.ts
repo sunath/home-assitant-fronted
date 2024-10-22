@@ -6,6 +6,7 @@ const {one,two,three} = {one:{on:true,one:true,ones:true,'1':true},two:{two:true
 const {kitchen,dinning,park,door} = { kitchen:{kitchen: true} , dinning:{dinning: true},park:{park:true},door:{door:true,do:true}}
 const {open,close} = {open:{open:true},close:{close:true}}
 const {fan} = {fan:{fan:true}}
+const {go,to,page,room} = { go:{go:true} , to:{to:true} , page:{page:true} ,room:{room: true}}
 
 
 
@@ -43,14 +44,34 @@ const door2_off_1 =  {name:"close the door two",words:[close,the,door,two]}
 const fan1_on_1 = {name:"turn on the fan one",words:[turn,on,the,fan,one]}
 const fan1_off_1 =  {name:"turn off the fan one",words:[turn,off,the,fan,one]}
 
+
+
+
+// Navigation
+const door_page_1 = {name:"go to the doors page",words:[go,to,the,door,page]}
+const light_page_1  = {name:"go to the lights page",words:[go,to,the,light,page]}
+const fan_page_1 = {name:"go to the fan page",words:[go,to,the,fan,page]}
+const room_1_page = {name:"go to the room 1",words:[go,to,the,room,one]}
+const room_2_page = {name:"go to the room 2",words:[go,to,the,room,two]}
+
+// lights
 commands.push(light1_on_1,light1_on_2,light1_off_1,light1_off_2)
 commands.push(light2_on_1,light2_on_2,light2_off_1,light2_off_2)
 commands.push(light3_on_1,light3_on_2,light3_off_1,light3_off_2)
 
+// doors
 commands.push(door1_on_1,door1_off_1);
 commands.push(door2_on_1,door2_off_1);
 
+// fans
 commands.push(fan1_on_1,fan1_off_1)
+
+// navigation
+commands.push(door_page_1)
+commands.push(light_page_1)
+commands.push(fan_page_1)
+commands.push(room_1_page)
+commands.push(room_2_page)
 
 export function findCommand(phrase:string){
   const words = phrase.split(" ")
