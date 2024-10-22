@@ -6,23 +6,16 @@
   </div>
 
 
-  <div class="components">
-
-
+  <div class="components" [@swipe]="this.swipeState">
     <div [className]="getRoomClasses('light',i)"  *ngFor="let lightID of props.components.light;index as i;">
       <app-light  [lightNumber]="lightID"  [routerMode]="false" [handGestureRoomEmitter]="roomHandSignatureEmitter" ></app-light>
     </div>
-
     <div [className]="getRoomClasses('door',i)"  *ngFor="let doorId of props.components.door;index as i;" >
       <app-door [doorID]="doorId" [doorRouterView]="false" [handGestureRoomEmitter]="roomHandSignatureEmitter"> </app-door>
     </div>
-
-
     <div [className]="getRoomClasses('fan',i)" *ngFor="let fanID of props.components.fan;index as i">
       <app-fan [fanNumber]="fanID"  [routerView]="false" [handGestureRoomEmitter]="roomHandSignatureEmitter"></app-fan>
     </div>
-
-
   </div>
 
 

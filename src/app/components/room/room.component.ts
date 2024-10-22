@@ -4,6 +4,7 @@ import {HomeService} from "../../services/home.service";
 import {Store} from "@ngrx/store";
 import {Subscription} from "rxjs";
 import {removeAngularSubscription} from "../../SubcriptionsHandler";
+import {animate, state, style, transition, trigger} from "@angular/animations";
 
 
 export interface RoomHandGestureSignal {
@@ -15,7 +16,43 @@ export interface RoomHandGestureSignal {
 @Component({
   selector: 'app-room',
   templateUrl: './room.component.html',
-  styleUrls: ['./room.component.scss']
+  styleUrls: ['./room.component.scss'],
+  animations:[
+    trigger('swipe',[
+
+      state('show',style({
+        transform:"translateY(-50px)",
+        opacity:1
+      })),
+
+      state('hide',style({
+        transform:"translateY(200%)",
+        opacity:0
+      })),
+
+      state('hideReverse',style({
+        transform:"translateY(-200%)",
+        opacity:0,
+      })),
+
+      state('reset',style({
+        transform:"translateY(-200%)"
+      })),
+
+      state('resetReverse',style({
+        transform:"translateY(200%)"
+      })),
+
+      transition("hide => reset",animate('50ms')),
+      transition("hideReverse => resetReverse",animate('50ms')),
+
+      transition('reset => show',animate('300ms ease-out')),
+      transition('resetReverse => show',animate('300ms ease-out')),
+
+      transition("show => hide",animate('250ms ease-in')),
+      transition("show => hideReverse",animate('250ms ease-in'))
+    ])
+  ]
 })
 export class RoomComponent implements OnInit,OnDestroy {
 
@@ -32,12 +69,17 @@ export class RoomComponent implements OnInit,OnDestroy {
   canNavigate = true;
   navigateRight = true;
 
-  allComponentsCount:Array<number> = new Array(0);
+  allComponentsCount:number = 0;
 
   $handGestureSubscription: Subscription | undefined;
   $pathParameterSubscription: Subscription | undefined;
 
   props = {name:"",components:{light:[],door:[],fan:[]}}
+
+
+  swipeState = "show"
+  swiping  = false
+
   constructor(
     private activatedRoute:ActivatedRoute,
     private homeService:HomeService,
@@ -51,8 +93,8 @@ export class RoomComponent implements OnInit,OnDestroy {
       this.roomId = params.get("id")
       // @ts-ignore
       this.props = await this.homeService.getRoomProperties(this.roomId);
-      const count  = this.props.components.light.length + this.props.components.door.length + this.props.components.fan.length;
-      this.allComponentsCount = new Array(count);
+      this.allComponentsCount = this.props.components.light.length + this.props.components.door.length + this.props.components.fan.length;
+
     })
      this.$handGestureSubscription = this.store.select('handGesture').subscribe(e => {
           if(!this.route.url.startsWith("/room")){return;}
@@ -67,15 +109,15 @@ export class RoomComponent implements OnInit,OnDestroy {
             if(!this.canNavigate){return;}
             this.canNavigate = false;
 
-            if(this.navigateRight && this.currentComponentIndex < this.allComponentsCount.length-1){
-                this.currentComponentIndex += 1;
+            if(this.navigateRight && this.currentComponentIndex < this.allComponentsCount -2){
+                this.goRightArrowClick()
             }else if(!this.navigateRight && this.currentComponentIndex > 0){
-              this.currentComponentIndex -= 1;
-            }else if(this.currentComponentIndex == this.allComponentsCount.length -1){
-              this.currentComponentIndex -= 1;
+              this.goLeftArrowClick();
+            }else if(this.currentComponentIndex == this.allComponentsCount -2){
+              this.goRightArrowClick();
               this.navigateRight = false;
             }else if(this.currentComponentIndex == 0){
-              this.currentComponentIndex +=1;
+              this.goRightArrowClick()
               this.navigateRight = true;
             }
 
@@ -120,23 +162,44 @@ export class RoomComponent implements OnInit,OnDestroy {
 
 
   goLeftArrowClick(){
-    this.currentComponentIndex--;
+
+    this.swipeState = "hideReverse"
+    this.swiping = true;
+
+    setTimeout(() => {
+      this.currentComponentIndex--;
+      this.swipeState = "resetReverse"
+
+      setTimeout(() => {
+        this.swipeState = "show"
+        setTimeout(() => {
+          this.swiping = false;
+        },300)
+
+      },55)
+    },300)
+
   }
 
   goRightArrowClick(){
-    this.currentComponentIndex++;
-  }
+    this.swipeState = "hide"
+    this.swiping = true;
 
-  getClassNameForLightIconCirlce(index:number){
-    let names = "  light-icon-circle "
-    if(this.currentComponentIndex == index){
-      names += " light-icon-circle-highlight "
-    }
-    return names
-  }
+    setTimeout(() => {
+      this.currentComponentIndex++;
+      this.swipeState = "reset"
 
-  onLightCircleGetClicked(index:number){
-    this.currentComponentIndex = index;
+      setTimeout(() => {
+        this.swipeState = "show"
+        setTimeout(() => {
+          this.swiping = false;
+        },300)
+
+      },55)
+    },300)
+
+
+    // this.swipeRight();
   }
 
 }
