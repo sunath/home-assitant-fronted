@@ -2,8 +2,8 @@ const commands:any[] = []
 
 // words
 const {turn,on,the,light,off} = { turn: {turn:true,'switch':true} , on:{on:true},off:{off:true,of:true} , the:{the:true} , light:{light:true,bulb:true,lights:true}}
-const {one,two,three} = {one:{on:true,one:true,ones:true},two:{two:true,'2':true,to:true},three:{street:true,three:true,tree:true}}
-const {kitchen,dinning,park,door} = { kitchen:{kitchen: true} , dinning:{dinning: true},park:{park:true},door:{door:true}}
+const {one,two,three} = {one:{on:true,one:true,ones:true,'1':true},two:{two:true,'2':true,to:true},three:{street:true,three:true,tree:true,'3':true}}
+const {kitchen,dinning,park,door} = { kitchen:{kitchen: true} , dinning:{dinning: true},park:{park:true},door:{door:true,do:true}}
 const {open,close} = {open:{open:true},close:{close:true}}
 const {fan} = {fan:{fan:true}}
 
@@ -76,3 +76,6 @@ export function findCommand(phrase:string){
 
   return ""
 }
+
+
+

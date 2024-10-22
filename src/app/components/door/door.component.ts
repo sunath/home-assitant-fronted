@@ -1,18 +1,21 @@
-import {Component, EventEmitter, Input, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {HomeService} from "../../services/home.service";
 import {Store} from "@ngrx/store";
 import {RoomHandGestureSignal} from "../room/room.component";
+import {SwipeAnimationTrigger} from "../../animations/swipe";
+import {TextFadingAnimationTrigger} from "../../animations/textFadeIn";
+import {Subscription} from "rxjs";
+import {removeAngularSubscription} from "../../SubcriptionsHandler";
 
 @Component({
   selector: 'app-door',
   templateUrl: './door.component.html',
-  styleUrls: ['./door.component.scss']
+  styleUrls: ['./door.component.scss'],
 })
-export class DoorComponent implements OnInit {
+export class DoorComponent implements OnInit,OnDestroy{
 
   @Input('handGestureRoomEmitter') handGestureRoomEmitter:EventEmitter<RoomHandGestureSignal> | undefined;
-
   @Input('doorID') doorId:number = 2;
   @Input('doorRouterView') doorRouterView:boolean = true;
   doorName = "Door 1"
@@ -20,6 +23,14 @@ export class DoorComponent implements OnInit {
 
   navigating = false;
   canNavigate = true;
+
+  swipeState = "appear"
+  swiping = false
+
+
+  $pathParameterSubscription:Subscription | undefined;
+  $queryParameterSubscription:Subscription | undefined;
+  $handGestureSubscription:Subscription | undefined;
 
   constructor(public route:Router,
               public activatedRouter:ActivatedRoute,
@@ -31,30 +42,25 @@ export class DoorComponent implements OnInit {
  async  ngOnInit() {
 
     if(this.doorRouterView){
-
-      this.activatedRouter.paramMap.subscribe( async (e) => {
+    this.$pathParameterSubscription= this.activatedRouter.paramMap.subscribe( async (e) => {
         // @ts-ignore
         this.doorId = e.get('id');
         const props = await this.homeService.getProperties()
         // @ts-ignore
-        this.doorOpen = props['door'][this.doorId.toString()]['state'] == 'on' ? true : false;
+        this.doorOpen = props['door'][this.doorId.toString()]['state'] == 'on';
         // @ts-ignore
         this.doorName = props['door'][this.doorId.toString()]['name']
       })
-
-
-      this.activatedRouter.queryParamMap.subscribe( async (e) => {
+    this.$queryParameterSubscription = this.activatedRouter.queryParamMap.subscribe( async (e) => {
         // @ts-ignore
         this.doorId = this.activatedRouter.snapshot.paramMap.get('id');
         const props = await this.homeService.getProperties()
         // @ts-ignore
-        this.doorOpen = props['door'][this.doorId.toString()]['state'] == 'on' ? true : false;
+        this.doorOpen = props['door'][this.doorId.toString()]['state'];
         // @ts-ignore
         this.doorName = props['door'][this.doorId.toString()]['name']
       })
-
-
-      this.store.select('handGesture').subscribe(e => {
+    this.$handGestureSubscription =this.store.select('handGesture').subscribe(e => {
 
         if(!this.route.url.startsWith("/door")){return;}
         if(e == "on" && (!this.doorOpen)){
@@ -86,43 +92,33 @@ export class DoorComponent implements OnInit {
         }
 
       })
-
-
-
-
     }else {
-
       if(this.doorId){
         const props = await this.homeService.getProperties()
         // @ts-ignore
-        this.doorOpen = props['door'][this.doorId.toString()]['state'] == 'on' ? true : false;
+        this.doorOpen = props['door'][this.doorId.toString()]['state'] == 'on';
         // @ts-ignore
         this.doorName = props['door'][this.doorId.toString()]['name']
        }
-
       if(this.handGestureRoomEmitter){
-
-        this.handGestureRoomEmitter.subscribe(e => {
-
+        this.$handGestureSubscription = this.handGestureRoomEmitter.subscribe(e => {
           if(e.type == "DOOR" && e.id == this.doorId){
-
             if(e.message == "on" && !this.doorOpen){
                 this.toggleDoorOpenClose()
             }else if(e.message == "off" && this.doorOpen){
               this.toggleDoorOpenClose()
             }
-
           }
-
         })
-
       }
-
     }
-
-
   }
 
+  async ngOnDestroy(){
+    removeAngularSubscription(this.$pathParameterSubscription);
+    removeAngularSubscription(this.$queryParameterSubscription);
+    removeAngularSubscription(this.$handGestureSubscription);
+  }
 
   async toggleDoorOpenClose(){
 
@@ -141,7 +137,6 @@ export class DoorComponent implements OnInit {
   }
 
 
-
 //   navigation controls
   getClassNameForLightIconCirlce(index:number){
     let names = "  light-icon-circle "
@@ -157,12 +152,51 @@ export class DoorComponent implements OnInit {
 
 
   goLeftArrowClick(){
-    if(this.doorId == 1){return;}
+    if(this.doorId == 1 || this.swiping){return;}
     this.route.navigateByUrl('/door/'+ (this.doorId-1))
+    this.swipeLeft();
   }
 
   goRightArrowClick(){
-    if(this.doorId == 2){return;}
+    if(this.doorId == 2 || this.swiping){return;}
     this.route.navigateByUrl('/door/'+ (++this.doorId) )
+    this.swipeRight();
+  }
+
+
+
+
+  swipeLeft(){
+    this.swipeState = "disappearRight"
+    this.swiping = true;
+    setTimeout(() => {
+      this.swipeState = "noDisplayLeft"
+
+      setTimeout(() => {
+        this.swipeState = "appear"
+        setTimeout(() => {
+          this.swiping = false;
+        },450)
+
+      },100)
+
+    },300)
+  }
+
+  swipeRight(){
+    this.swipeState = "disappearLeft"
+    this.swiping = true;
+    setTimeout(() => {
+      this.swipeState = "noDisplayRight"
+
+      setTimeout(() => {
+        this.swipeState = "appear"
+        setTimeout(() => {
+          this.swiping = false;
+        },450)
+
+      },100)
+
+    },300)
   }
 }

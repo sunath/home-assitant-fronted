@@ -226,7 +226,7 @@ export class MicrophoneComponent implements OnInit,AfterViewInit {
         this.router.navigateByUrl('/light/'+num+'?on=true')
       }else if(command.startsWith("turn off the light")){
         command = command.replace("turn off the light ",'');
-        const num = numberStringToNumber(command)
+        let num = numberStringToNumber(command)
         await this.homeService.lightOff(num)
         this.router.navigateByUrl('/light/'+num+'?on=false')
       }else if(command.startsWith("open the door")){

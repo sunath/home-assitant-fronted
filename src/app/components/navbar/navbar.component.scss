@@ -160,7 +160,7 @@
   align-items: center;
   background-color: white;
   transform: translateX(-100%);
-  transition: all .5s ease-out;
+  transition: all .3s ease-out;
 
   button{
     scale: 1.5;
@@ -173,9 +173,23 @@
 }
 
 .navbar-opened-show{
+  animation:NavbarOpenShowAnimation .3s ease-in ;
   transform: translateX(0%);
 }
 
+.navbar-opened-hide{
+    transform: translateX(100%);
+}
+
+@keyframes NavbarOpenShowAnimation {
+  0%{
+    transform: translateX(-100%);
+  }
+
+  100%{
+    transform: translateX(0%);
+  }
+}
 
 
 

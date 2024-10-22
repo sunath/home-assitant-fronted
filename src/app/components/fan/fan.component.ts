@@ -12,7 +12,6 @@ import {RoomHandGestureSignal} from "../room/room.component";
 export class FanComponent implements OnInit,AfterViewInit {
 
   @Input('handGestureRoomEmitter') handGestureRoomEmitter:EventEmitter<RoomHandGestureSignal> | undefined;
-
   @Input('routerView') routerView = true;
 
   @ViewChild('fanCheckBox') fanCheckBox: ElementRef<HTMLInputElement> | undefined = undefined;

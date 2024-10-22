@@ -1,14 +1,16 @@
-import { Component, OnInit } from '@angular/core';
+import {Component, OnDestroy, OnInit} from '@angular/core';
 import {Store} from "@ngrx/store";
 import {ActivatedRoute, Router} from "@angular/router";
 import {navbarCloseAction} from "../../state/actions/navbar.actions";
+import {Subscription} from "rxjs";
+import {removeAngularSubscription} from "../../SubcriptionsHandler";
 
 @Component({
   selector: 'app-navbar',
   templateUrl: './navbar.component.html',
   styleUrls: ['./navbar.component.scss']
 })
-export class NavbarComponent implements OnInit {
+export class NavbarComponent implements OnInit, OnDestroy {
 
   urls = [
     "/light/1",
@@ -24,6 +26,11 @@ export class NavbarComponent implements OnInit {
   isNavbarOpened = false;
   navbarClasses:string[] = ['navbar']
 
+  $microphoneRecordingSubscription:Subscription | undefined;
+  $navbarStateSubscription : Subscription | undefined;
+  $handGestureSubscription:Subscription | undefined;
+
+
   openedUsingHand = false;
   handMoveDown = true;
   canMoveUsingHand = true;
@@ -32,15 +39,13 @@ export class NavbarComponent implements OnInit {
     private store:Store<{microphoneRecording:boolean,navbarState:boolean,handGesture:string}>,
     private router:Router,
     private activatedRouter:ActivatedRoute
-  ) {
+  ) {}
 
-    this.store.select('microphoneRecording').subscribe(e => {
-      this.$microphoneRecording = e;
-    })
-
-    this.store.select('navbarState').subscribe(e => {
+  ngOnInit(): void {
+    this.$microphoneRecordingSubscription = this.store.select('microphoneRecording').subscribe(e => {this.$microphoneRecording = e;})
+    this.$navbarStateSubscription = this.store.select('navbarState').subscribe(e => {
       if(e && !this.isNavbarOpened){
-          this.toggleNavbar()
+        this.toggleNavbar()
         this.openedUsingHand  = true;
       }else if(!e && this.isNavbarOpened && this.openedUsingHand){
         if(!this.router.url.startsWith("/navbar"))return;
@@ -49,9 +54,7 @@ export class NavbarComponent implements OnInit {
         this.toggleNavbar()
       }
     })
-
-
-    this.store.select('handGesture').subscribe(async (e) => {
+    this.$handGestureSubscription = this.store.select('handGesture').subscribe(async (e) => {
       // console.log(this.router.url.startsWith("/navbar"))
       if(!this.router.url.startsWith("/navbar"))return;
 
@@ -87,10 +90,12 @@ export class NavbarComponent implements OnInit {
         this.toggleNavbar()
       }
     })
-
   }
 
-  ngOnInit(): void {
+  ngOnDestroy() {
+    removeAngularSubscription(this.$microphoneRecordingSubscription);
+    removeAngularSubscription(this.$navbarStateSubscription);
+    removeAngularSubscription(this.$handGestureSubscription);
   }
 
 
@@ -100,7 +105,6 @@ export class NavbarComponent implements OnInit {
 
     if(!this.isNavbarOpened){
       this.navbarClasses = ['navbar','navbar-expanded','navbar-close']
-
       setTimeout(() => {
         this.navbarClasses = ['navbar']
       },300)

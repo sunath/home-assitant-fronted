@@ -4,13 +4,17 @@
   <h2>{{doorName}}</h2>
 
 
-  <div class="backDoor" >
-    <div [class]="getClassList()" (click)="toggleDoorOpenClose()" >
+  <div>
 
-      <div class="knob"></div>
+    <div class="backDoor"  >
+      <div [class]="getClassList()" (click)="toggleDoorOpenClose()" >
 
+        <div class="knob"></div>
+
+      </div>
     </div>
   </div>
+
 
 
   <div class="controlButtons" *ngIf="doorRouterView">

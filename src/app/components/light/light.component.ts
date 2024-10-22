@@ -1,9 +1,13 @@
-import {Component, EventEmitter, Input, NgZone, OnInit} from '@angular/core';
+import {Component, EventEmitter, Input, NgZone, OnDestroy, OnInit} from '@angular/core';
 import {HomeService} from "../../services/home.service";
 import {ActivatedRoute, Router, RouterState} from "@angular/router";
 import {animate, state, style, transition, trigger} from "@angular/animations";
 import {Store} from "@ngrx/store";
 import {RoomHandGestureSignal} from "../room/room.component";
+import {Subscription} from "rxjs";
+import {removeAngularSubscription} from "../../SubcriptionsHandler";
+import {SwipeAnimationTrigger} from "../../animations/swipe";
+import {TextFadingAnimationTrigger} from "../../animations/textFadeIn";
 
 @Component({
   selector: 'app-light',
@@ -41,41 +45,51 @@ import {RoomHandGestureSignal} from "../room/room.component";
     ),
     transition('off => on', animate('300ms 200ms ease-out')),
     transition('on => off', animate('300ms 200ms ease-in'))
-  ])
+  ]),
+  SwipeAnimationTrigger,
+  TextFadingAnimationTrigger
 ]
 })
-export class LightComponent implements OnInit {
+export class LightComponent implements OnInit,OnDestroy {
 
   @Input('handGestureRoomEmitter') handGestureRoomEmitter:EventEmitter<RoomHandGestureSignal> | undefined;
-
   @Input('lightNumber') number:number = 1;
-
-  lightOn = false;
-
   @Input('routerMode') routerMode = true;
 
+  swipeAnimationTime = 500;
+
+  $handGestureSubscription: Subscription | undefined;
+  $queryParameterSubscription: Subscription | undefined;
+  $pathParameterSubscription : Subscription | undefined;
+
+  lightOn = false;
   lightName = "HomeLight"
 
   routerURL = ""
-
   navigating = false;
   navigatingRight = true;
   canNavigate = true;
 
+  swipeState = "appear"
+  swiping = false
 
+  textState = "show"
+  textAnimating = false
 
+  async toggleLightOnOff($event:any){
 
-  toggleLightOnOff($event:any){
     if($event){
       // @ts-ignore
       event.preventDefault();
     }
-    this.lightOn = !this.lightOn;
-    if(this.lightOn) {
-      this.homeService.lightOn(this.number).then(e => console.log(e, " ight on is on"))
-    }else{
-      this.homeService.lightOff(this.number).then(e => console.log(e))
-    }
+
+      try{
+        // @ts-ignore
+        const val = ( await this.homeService['light' + (this.lightOn ? 'Off' : 'On' )](this.number))
+        this.lightOn = !this.lightOn;
+      }catch (error){
+       console.error(error)
+      }
   }
 
   constructor(private homeService:HomeService,
@@ -83,130 +97,117 @@ export class LightComponent implements OnInit {
               private store:Store<{handGesture:string}>,
               private route:Router,private ngZone:NgZone) {}
 
+  // Change the light according to the home service state
   async setupTheLight(){
+    // get the properites from the home
     const props = await this.homeService.getProperties();
-    // console.log(props)
-    // @ts-ignore
-    // console.log(props['light']['1'])
     // @ts-ignore
     const state = props['light'][this.number.toString()]
-    console.log(state)
-    this.lightName = state['name']
-    this.lightOn = state['state'] == 'on' ? true : false;
+    this.textAnimating = true;
+    this.textState = "hide"
+    // change the light state
+    this.lightOn = state['state'] == 'on';
+
+    setTimeout(() => {
+      this.textState = "show"
+      // set the light name
+      this.lightName = state['name']
+
+    },400)
+
+
+
+
   }
 
   async ngOnInit() {
-
+    // Check weather we are in router mode or room mode
     if(!this.routerMode){
-      console.log("setup the light",this.number)
+      // set up the light according to the given input
+      // then subscribe to the hand gesture
       await this.setupTheLight()
+      // if the hand gesture emitter was not given,we just pass it
+      if(!(this.handGestureRoomEmitter)){return;}
+      // subscribe to the hand gesture
+      this.$handGestureSubscription =  this.handGestureRoomEmitter.subscribe( (e) => {
+        // check weather this is the light or not
+        if(!(e.type == "LIGHT" && e.id == this.number)){return;}
+        // Change the light state according to the hand signature
+        if(e.message == "on" && !this.lightOn){
+            // turn on the light if it does not
+            this.toggleLightOnOff(null)
+        }else if(e.message == "off" && this.lightOn){
+            // turn off the light if it does not
+            this.toggleLightOnOff(null)
+        }
+      })
+    }else{
+      // add the path parameter subscription
+      this.$pathParameterSubscription = this.routerParam.paramMap.subscribe(async (params) => {
+        await this.queryAndPathSubscriptionHandler()
+      })
+      // add the query parameter subscription
+      this.$queryParameterSubscription = this.routerParam.queryParamMap.subscribe( async (e) => {
+        await this.queryAndPathSubscriptionHandler()
+      })
+      // add the hand gesture subscription
+      this.$handGestureSubscription =  this.store.select('handGesture').subscribe(e => {
 
-      if(this.handGestureRoomEmitter){
-          this.handGestureRoomEmitter.subscribe(e => {
-          // console.log(e,)
-            if(e.type == "LIGHT" && e.id == this.number ){
-              if(e.message == "on" && !this.lightOn){
-                this.toggleLightOnOff(null)
-              }else if(e.message == "off" && this.lightOn){
-                this.toggleLightOnOff(null)
-              }
+        if(!this.route.url.startsWith("/light")){return;}
+        if(e == "on" && (!this.lightOn)){
+          this.toggleLightOnOff(null)
+          this.navigating = false;
+        }else if(e == "off" && (this.lightOn)){
+          this.toggleLightOnOff(null)
+          this.navigating = false;
+        }else if(e.startsWith("navigate")){
+          if(!this.navigating){
+            this.navigating = true;
+          }
+
+          if(this.number == 5){
+            this.navigatingRight = false;
+          }
+
+          if(!this.canNavigate){
+            return;
+          }
+
+          if(this.navigatingRight){
+            this.goRightArrowClick()
+          }else{
+            if(this.number == 1){
+              this.navigatingRight = true;
+              this.goRightArrowClick()
+            }else{
+              this.goLeftArrowClick();
             }
 
-          })
-      }
+          }
 
-    }else{
+          this.canNavigate = false;
 
-      this.routerParam.paramMap.subscribe(params => {
-        const snapshot = this.routerParam.snapshot;
-        const id= snapshot.paramMap.get('id')
-        const state = snapshot.queryParamMap.get('on')
-        console.log(snapshot)
-        // @ts-ignore
-        this.number = id;
-        //   @ts-ignore
-        if(state){
-          this.lightOn = state  == "on" ? true : false;
+          setTimeout(() => {
+            this.canNavigate = true;
+          },2000)
+
         }
 
-        this.setupTheLight()
-        // this.ngZone.run(this.setupTheLight())
       })
-
-      this.routerParam.queryParamMap.subscribe(e => {
-        const snapshot = this.routerParam.snapshot;
-        const id= snapshot.paramMap.get('id')
-        const state = snapshot.queryParamMap.get('on')
-        console.log(snapshot)
-
-        // @ts-ignore
-        this.number = id;
-        //   @ts-ignore
-        if(state){
-          this.lightOn = state  == "on" ? true : false;
-        }
-        this.setupTheLight()
-      })
-
     }
 
 
-
-
-    this.store.select('handGesture').subscribe(e => {
-
-      if(!this.route.url.startsWith("/light")){return;}
-      if(e == "on" && (!this.lightOn)){
-        this.toggleLightOnOff(null)
-        this.navigating = false;
-      }else if(e == "off" && (this.lightOn)){
-        this.toggleLightOnOff(null)
-        this.navigating = false;
-      }else if(e.startsWith("navigate")){
-        if(!this.navigating){
-          this.navigating = true;
-        }
-
-        if(this.number == 5){
-          this.navigatingRight = false;
-        }
-
-        if(!this.canNavigate){
-          return;
-        }
-
-        if(this.navigatingRight){
-          this.goRightArrowClick()
-        }else{
-          if(this.number == 1){
-            this.navigatingRight = true;
-            this.goRightArrowClick()
-          }else{
-            this.goLeftArrowClick();
-          }
-
-        }
-
-        this.canNavigate = false;
-
-        setTimeout(() => {
-          this.canNavigate = true;
-        },2000)
-
-      }
-
-    })
-
-
   }
 
+  async ngOnDestroy(){
+    // remove all the subscription when we are going out from the view
+    removeAngularSubscription(this.$handGestureSubscription);
+    removeAngularSubscription(this.$pathParameterSubscription);
+    removeAngularSubscription(this.$queryParameterSubscription);
+  }
 
   lightOnOffClasses(){
     return ' main-circle '  + (this.lightOn ? ' light-on ' : 'light-off')
-  }
-
-  fakeLightClasses(){
-    return (this.lightOn ? ' fake-light-on ' : ' fake-light-off ') + ' fake-light '
   }
 
   getClassNameForLightIconCirlce(index:number){
@@ -217,19 +218,78 @@ export class LightComponent implements OnInit {
       return names
   }
 
-  onLightCircleGetClicked(index:number){
-    this.route.navigateByUrl('/light/'+index)
+  async onLightCircleGetClicked(index:number){
+    if(this.swiping){return;}
+    const num = this.number
+    await this.route.navigateByUrl('/light/'+index)
+    // console.log('running')
+    const f = (num != index) ? (num > index) ? this.swipeRight() : this.swipeLeft() : null;
   }
 
 
-  goLeftArrowClick(){
-    if(this.number == 1){return;}
-    this.route.navigateByUrl('/light/'+ (this.number-1))
+  async goLeftArrowClick(){
+    if(this.number == 1 || this.swiping){return;}
+    await this.route.navigateByUrl('/light/'+ (this.number-1))
+    this.swipeLeft();
   }
 
-  goRightArrowClick(){
-    if(this.number == 5){return;}
-    this.route.navigateByUrl('/light/'+ (++this.number) )
+  async goRightArrowClick(){
+    if(this.number == 5 || this.swiping){return;}
+    await this.route.navigateByUrl('/light/'+ (++this.number) )
+    this.swipeRight();
+  }
+
+
+
+  // handle the changes when the query and path parameters change
+  async queryAndPathSubscriptionHandler(){
+    // get the current snapshot
+    const snapshot = this.routerParam.snapshot;
+    // get the id
+    const id= snapshot.paramMap.get('id')
+    // get the light state
+    const state = snapshot.queryParamMap.get('on')
+    // @ts-ignore
+    this.number = id;
+    //   @ts-ignore
+    if(state){
+      this.lightOn = state  == "on";
+    }
+    await this.setupTheLight()
+  }
+
+  swipeLeft(){
+    this.swipeState = "disappearRight"
+    this.swiping = true;
+    setTimeout(() => {
+      this.swipeState = "noDisplayLeft"
+
+      setTimeout(() => {
+        this.swipeState = "appear"
+        setTimeout(() => {
+          this.swiping = false;
+        },450)
+
+      },100)
+
+    },300)
+  }
+
+  swipeRight(){
+    this.swipeState = "disappearLeft"
+    this.swiping = true;
+    setTimeout(() => {
+      this.swipeState = "noDisplayRight"
+
+      setTimeout(() => {
+        this.swipeState = "appear"
+        setTimeout(() => {
+          this.swiping = false;
+        },450)
+
+      },100)
+
+    },300)
   }
 
 }

@@ -1,20 +1,29 @@
-
 <div class="header">
-  <h1>{{lightName}}</h1>
+  <h1 [@textAnimation]="textState">{{lightName}}</h1>
 </div>
 
-<div [className]=" 'light-container ' + (this.lightOn ? ' light-container-on ' : ' ') "  @containerChange>
+<div class="light-component" >
 
 
+
+
+  <div [className]=" 'light-container ' + (this.lightOn ? ' light-container-on ' : ' ') "  [@swipe]="swipeState">
     <div [class]="lightOnOffClasses()" (click)="this.toggleLightOnOff($event)"></div>
     <div [@fakeLightTransition]=" (lightOn ? 'on' : 'off') " (click)="this.toggleLightOnOff($event)" class="fake-light"></div>
     <div class="bulb-holder bulb-holder-1"></div>
-   <div class="bulb-holder bulb-holder-2"></div>
-  <div class="bulb-holder bulb-holder-3"></div>
+    <div class="bulb-holder bulb-holder-2"></div>
+    <div class="bulb-holder bulb-holder-3"></div>
+    <div class="bulb-wire"></div>
+  </div>
+
+  <div>
+
+  </div>
+
+
 
 <!--  <div class="fake-light" [class]=""></div>-->
 
-    <div class="bulb-wire"></div>
 
 
   <div class="controlButtons" *ngIf="routerMode">

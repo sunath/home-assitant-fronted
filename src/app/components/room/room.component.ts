@@ -1,7 +1,9 @@
-import {Component, EventEmitter, OnInit} from '@angular/core';
+import {Component, EventEmitter, OnDestroy, OnInit} from '@angular/core';
 import {ActivatedRoute, Router} from "@angular/router";
 import {HomeService} from "../../services/home.service";
 import {Store} from "@ngrx/store";
+import {Subscription} from "rxjs";
+import {removeAngularSubscription} from "../../SubcriptionsHandler";
 
 
 export interface RoomHandGestureSignal {
@@ -15,7 +17,7 @@ export interface RoomHandGestureSignal {
   templateUrl: './room.component.html',
   styleUrls: ['./room.component.scss']
 })
-export class RoomComponent implements OnInit {
+export class RoomComponent implements OnInit,OnDestroy {
 
   roomHandSignatureEmitter: EventEmitter<RoomHandGestureSignal> = new EventEmitter<RoomHandGestureSignal>();
   roomHandSignatureProps:RoomHandGestureSignal = {
@@ -32,6 +34,8 @@ export class RoomComponent implements OnInit {
 
   allComponentsCount:Array<number> = new Array(0);
 
+  $handGestureSubscription: Subscription | undefined;
+  $pathParameterSubscription: Subscription | undefined;
 
   props = {name:"",components:{light:[],door:[],fan:[]}}
   constructor(
@@ -42,17 +46,15 @@ export class RoomComponent implements OnInit {
   ) {}
 
    ngOnInit() {
-    this.activatedRoute.paramMap.subscribe(async (params) => {
+     this.$pathParameterSubscription = this.activatedRoute.paramMap.subscribe(async (params) => {
       // @ts-ignore
       this.roomId = params.get("id")
       // @ts-ignore
       this.props = await this.homeService.getRoomProperties(this.roomId);
-      console.log(this.props)
       const count  = this.props.components.light.length + this.props.components.door.length + this.props.components.fan.length;
       this.allComponentsCount = new Array(count);
     })
-
-     this.store.select('handGesture').subscribe(e => {
+     this.$handGestureSubscription = this.store.select('handGesture').subscribe(e => {
           if(!this.route.url.startsWith("/room")){return;}
 
           if(e == "on"){
@@ -83,6 +85,12 @@ export class RoomComponent implements OnInit {
 
      })
 
+  }
+
+
+  ngOnDestroy() {
+    removeAngularSubscription(this.$handGestureSubscription);
+    removeAngularSubscription(this.$handGestureSubscription);
   }
 
 

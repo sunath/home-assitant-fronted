@@ -23,6 +23,7 @@ import { HandControllerComponent } from './components/hand-controller/hand-contr
 import {HandGestureMotionReducer} from "./state/reducers/hand.motion.detect.reducer";
 import { NavbarHandControllerComponent } from './components/navbar-hand-controller/navbar-hand-controller.component';
 import {navbarReducer} from "./state/reducers/navbar.reducer";
+import {MatSnackBar, MatSnackBarModule} from "@angular/material/snack-bar";
 
 @NgModule({
   declarations: [
@@ -43,6 +44,7 @@ import {navbarReducer} from "./state/reducers/navbar.reducer";
     BrowserAnimationsModule,
     MatButtonModule,
     MatIconModule,
+    MatSnackBarModule,
     HttpClientModule,
     StoreModule.forRoot({
       microphoneRecording: microphoneReducer,
